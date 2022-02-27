@@ -41,10 +41,12 @@ class game_interface:
         self.image_list = []
         self.ref_list = []
         
+        self.gameEnd = False
+        
         for filename in glob.glob('Letters/*.png'):
             self.image_list.append(filename)
         
-        self.label = ttk.Label(
+        self.titleLable = ttk.Label(
                 root, 
                 text = "HANDLE",
                 font = ("Karnak Condensed", 30),
@@ -52,7 +54,7 @@ class game_interface:
                 background = 'black',
                 padding = 50
                 )
-        self.label.pack()
+        self.titleLable.pack()
         
         self.tryFrame = tk.Frame(
                 root,
@@ -104,8 +106,20 @@ class game_interface:
         self.entry = tk.Entry(root)
         self.entry.pack()
         
-        def tryGuess():
-            self.guess = self.entry.get().upper()
+        def winGame():
+            self.titleLable.configure(text = "YOU WIN!")
+        
+        def loseGame():
+            self.titleLable.configure(text = "YOU LOSE")
+        
+        def tryGuess(thisGuess = None):
+            if(self.gameEnd):
+                return
+            
+            if(thisGuess == None):
+                self.guess = self.entry.get().upper()
+            else:
+                self.guess = thisGuess
 
             if(self.guess.lower() in dictionary or self.guess.lower() in answers):
                 
@@ -136,6 +150,12 @@ class game_interface:
                     
                 self.currentTry += 1
             self.entry.delete(0, 5)
+            if(self.guess.lower() == word):
+                winGame()
+                self.gameEnd = True
+            elif(self.currentTry == 6):
+                loseGame()
+                self.gameEnd = True
             
         self.checkButton = tk.Button(text = "Check", command = tryGuess)
         self.checkButton.pack()
