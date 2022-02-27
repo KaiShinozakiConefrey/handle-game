@@ -9,8 +9,6 @@ import tkinter as tk
 from tkinter import ttk
 import random
 
-from english_words import english_words_lower_set
-
 from PIL import ImageTk, Image
 import glob
     
@@ -18,11 +16,14 @@ root = tk.Tk()
 root['bg'] = 'black'
 root.geometry('1000x900')
 
+answers = set(line.strip() for line in open('answers.txt'))
+dictionary = set(line.strip() for line in open('dictionary.txt'))
+
+
 def chooseword():
     fiveset = []
-    for i in english_words_lower_set:
-        if(len(i) == 5):
-            fiveset.append(i)
+    for i in answers:
+        fiveset.append(i)
     choice = random.choice(fiveset)
     print(choice)
     return choice
@@ -105,7 +106,8 @@ class game_interface:
         
         def tryGuess():
             self.guess = self.entry.get().upper()
-            if(self.guess.lower() in english_words_lower_set):
+
+            if(self.guess.lower() in dictionary or self.guess.lower() in answers):
                 
                 for i in range(5):
                     self.letterList[self.currentTry * 5 + i].set(self.guess[i])
